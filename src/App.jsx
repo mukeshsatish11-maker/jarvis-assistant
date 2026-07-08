@@ -164,7 +164,21 @@ export default function DailyAssistant() {
         body: JSON.stringify({
           model: "claude-sonnet-4-6",
           max_tokens: 1000,
-          messages: [{ role: "user", content: `You are a personal assistant helping someone stay organised. They said: "${fullText}"\n\nExtract every task or thing they need to do. For each:\n- Clear action-oriented title (start with a verb)\n- Category from: Job search, Income / business, Personal, Admin, Fitness, Follow-up\n- Priority: High, Medium, or Low\n- Due date as YYYY-MM-DD (today=${today()}) or null if unclear\n\nRespond ONLY with a JSON array, no markdown, no explanation:\n[{"title":"...","category":"...","priority":"...","dueDate":"...or null"}]` }]
+          messages: [{ role: "user", content: `You are Jarvis, a smart personal assistant. The user has done a brain dump of everything on their mind. Your job is to carefully extract EVERY separate task, action, or thing they need to do — even if mentioned casually or in passing.
+
+User said: "${fullText}"
+
+Rules:
+- Split into AS MANY separate tasks as possible. If they mention 5 things, create 5 tasks. Never merge separate actions into one task.
+- Look for connecting words like "and", "also", "plus", "then", "I need to", "I should", "I have to", "don't forget" — each signals a new task.
+- Each task title must start with an action verb (Call, Email, Book, Reply, Send, Follow up, Complete, Check, Update, Research, Apply, Message, etc.)
+- Keep titles clear and concise — one action per task
+- Category must be one of: Job search, Income / business, Personal, Admin, Fitness, Follow-up
+- Priority: High (urgent or time-sensitive), Medium (this week), Low (someday/no rush)
+- Due date as YYYY-MM-DD. Today is ${today()}. Use context: "today"=today, "tomorrow"=tomorrow, "this week"=within 7 days. If no date clue, use null.
+
+Respond ONLY with a valid JSON array. No markdown, no explanation, no extra text:
+[{"title":"...","category":"...","priority":"...","dueDate":"...or null"}]` }]
         })
       });
       const data = await res.json();
